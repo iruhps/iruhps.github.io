@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Doge AR - Patrick Image Target</title>
+  <title>Doge AR - 3 Image Targets</title>
 
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -54,7 +54,7 @@
   <div id="hint">กำลังเริ่ม AR… โปรดอนุญาตให้เว็บไซต์ใช้กล้อง</div>
 
   <a-scene
-    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: yes; uiError: yes;"
+    mindar-image="imageTargetSrc: ./targets-3.mind; autoStart: true; uiLoading: no; uiScanning: yes; uiError: yes;"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false"
     renderer="colorManagement: true; physicallyCorrectLights: true;"
@@ -64,16 +64,17 @@
       <a-asset-item id="dogeAsset" src="./doge.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Patrick image target compiled into targets.mind -->
-    <a-entity id="patrick-target" mindar-image-target="targetIndex: 0">
-      <a-gltf-model
-        id="doge-model"
-        src="#dogeAsset"
-        position="0 0 0"
-        rotation="0 0 0"
-        scale="0.5 0.5 0.5"
-        animation-mixer>
-      </a-gltf-model>
+    <!-- Target order in targets-3.mind: 0 = Fuck, 1 = Doakes, 2 = Patrick -->
+    <a-entity id="fuck-target" mindar-image-target="targetIndex: 0">
+      <a-gltf-model src="#dogeAsset" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+    </a-entity>
+
+    <a-entity id="doakes-target" mindar-image-target="targetIndex: 1">
+      <a-gltf-model src="#dogeAsset" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+    </a-entity>
+
+    <a-entity id="patrick-target" mindar-image-target="targetIndex: 2">
+      <a-gltf-model src="#dogeAsset" position="0 0 0" rotation="0 0 0" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
     </a-entity>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -81,22 +82,26 @@
 
   <script>
     const hint = document.getElementById('hint');
-    const target = document.getElementById('patrick-target');
-    const model = document.getElementById('doge-model');
+    const targets = [
+      { element: document.getElementById('fuck-target'), name: 'Fuck Marker' },
+      { element: document.getElementById('doakes-target'), name: 'Doakes Marker' },
+      { element: document.getElementById('patrick-target'), name: 'Patrick' }
+    ];
 
-    target.addEventListener('targetFound', () => {
-      hint.textContent = 'พบรูป Patrick แล้ว! ขยับกล้องช้า ๆ เพื่อดู Doge';
+    targets.forEach(({ element, name }) => {
+      element.addEventListener('targetFound', () => {
+        hint.textContent = 'พบ ' + name + ' แล้ว! Doge กำลังแสดงอยู่';
+      });
+      element.addEventListener('targetLost', () => {
+        hint.textContent = 'ส่องกล้องไปที่ Fuck Marker, Doakes หรือ Patrick';
+      });
     });
 
-    target.addEventListener('targetLost', () => {
-      hint.textContent = 'ส่องกล้องไปที่รูป Patrick เพื่อแสดง Doge';
+    document.getElementById('dogeAsset').addEventListener('loaded', () => {
+      hint.textContent = 'โหลดโมเดล Doge แล้ว — ส่องกล้องไปที่ Marker ทั้ง 3 รูป';
     });
 
-    model.addEventListener('model-loaded', () => {
-      hint.textContent = 'โหลด Doge สำเร็จ — ส่องกล้องไปที่รูป Patrick';
-    });
-
-    model.addEventListener('model-error', () => {
+    document.getElementById('dogeAsset').addEventListener('error', () => {
       hint.textContent = 'โหลดโมเดลไม่สำเร็จ โปรดตรวจสอบไฟล์ doge.glb';
     });
   </script>
