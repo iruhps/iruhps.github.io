@@ -4,30 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Face AR Filter</title>
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
   <style>
-    html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;background:#111}
-    a-scene{width:100%;height:100%}
-    .hint{position:fixed;z-index:10;top:16px;left:0;right:0;text-align:center;color:white;text-shadow:0 1px 5px #000;pointer-events:none}
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; font-family: Arial, sans-serif; }
+    body { position: fixed; inset: 0; }
+    a-scene { position: fixed; inset: 0; width: 100%; height: 100%; }
+    .hint { position: fixed; z-index: 10; top: 16px; left: 0; right: 0; text-align: center; color: white; text-shadow: 0 1px 5px #000; pointer-events: none; }
   </style>
 </head>
 <body>
   <div class="hint">หันหน้าเข้ากล้องเพื่อใช้งานฟิลเตอร์</div>
-  <a-scene mindar-face embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+  <a-scene mindar-face embedded color-space="sRGB" renderer="alpha: true; colorManagement: true; physicallyCorrectLights: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
     <a-assets>
       <a-asset-item id="glassesModel" src="./glasses_project.glb"></a-asset-item>
       <a-asset-item id="hatModel" src="./the_witchs_hat.glb"></a-asset-item>
     </a-assets>
 
-    <!-- แว่น: ยึดบริเวณดั้งจมูก -->
+    <!-- แสงช่วยให้วัสดุของโมเดลไม่มืดดำ -->
+    <a-entity light="type: ambient; color: #ffffff; intensity: 1.5"></a-entity>
+    <a-entity light="type: directional; color: #ffffff; intensity: 1.2" position="0 1 1"></a-entity>
+
+    <!-- แว่น: ยึดกึ่งกลางใบหน้าเพื่อให้วางคร่อมดวงตาทั้งสองข้าง -->
     <a-entity mindar-face-target="anchorIndex: 168">
-      <a-gltf-model src="#glassesModel" position="0 0 0.02" rotation="0 0 0" scale="0.35 0.35 0.35"></a-gltf-model>
+      <a-gltf-model src="#glassesModel" position="0 0 0.02" rotation="0 0 0" scale="0.01 0.01 0.01"></a-gltf-model>
     </a-entity>
 
-    <!-- หมวก: ยึดบริเวณหน้าผากด้านบน -->
+    <!-- หมวก: ยึดจุด 10 บริเวณหน้าผาก แล้วเลื่อนขึ้นไปเหนือศีรษะ -->
     <a-entity mindar-face-target="anchorIndex: 10">
-      <a-gltf-model src="#hatModel" position="0 0.65 -0.05" rotation="0 0 0" scale="0.45 0.45 0.45"></a-gltf-model>
+      <a-gltf-model src="#hatModel" position="0 0.35 -0.25" rotation="0 0 0" scale="0.01 0.01 0.01"></a-gltf-model>
     </a-entity>
 
     <a-camera active="false" position="0 0 0"></a-camera>
