@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Doge AR - Patrick Image Target</title>
+
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    body {
+      position: fixed;
+      inset: 0;
+      min-height: 100%;
+      overscroll-behavior: none;
+      font-family: Arial, sans-serif;
+    }
+
+    a-scene {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #hint {
+      position: fixed;
+      z-index: 10;
+      top: max(12px, env(safe-area-inset-top));
+      left: 12px;
+      right: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, .72);
+      color: white;
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="hint">กำลังเริ่ม AR… โปรดอนุญาตให้เว็บไซต์ใช้กล้อง</div>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: yes; uiError: yes;"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    renderer="colorManagement: true; physicallyCorrectLights: true;"
+    embedded>
+
+    <a-assets>
+      <a-asset-item id="dogeAsset" src="./doge.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Patrick image target compiled into targets.mind -->
+    <a-entity id="patrick-target" mindar-image-target="targetIndex: 0">
+      <a-gltf-model
+        id="doge-model"
+        src="#dogeAsset"
+        position="0 0 0"
+        rotation="0 0 0"
+        scale="0.5 0.5 0.5"
+        animation-mixer>
+      </a-gltf-model>
+    </a-entity>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+  </a-scene>
+
+  <script>
+    const hint = document.getElementById('hint');
+    const target = document.getElementById('patrick-target');
+    const model = document.getElementById('doge-model');
+
+    target.addEventListener('targetFound', () => {
+      hint.textContent = 'พบรูป Patrick แล้ว! ขยับกล้องช้า ๆ เพื่อดู Doge';
+    });
+
+    target.addEventListener('targetLost', () => {
+      hint.textContent = 'ส่องกล้องไปที่รูป Patrick เพื่อแสดง Doge';
+    });
+
+    model.addEventListener('model-loaded', () => {
+      hint.textContent = 'โหลด Doge สำเร็จ — ส่องกล้องไปที่รูป Patrick';
+    });
+
+    model.addEventListener('model-error', () => {
+      hint.textContent = 'โหลดโมเดลไม่สำเร็จ โปรดตรวจสอบไฟล์ doge.glb';
+    });
+  </script>
+</body>
+</html>
